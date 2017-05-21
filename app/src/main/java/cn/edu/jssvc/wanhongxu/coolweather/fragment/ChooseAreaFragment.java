@@ -14,6 +14,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.litepal.LitePalApplication;
 import org.litepal.crud.DataSupport;
 
 import java.io.IOException;
@@ -61,7 +62,7 @@ public class ChooseAreaFragment extends Fragment {
         titleText = (TextView) view.findViewById(R.id.title_text);
         backButton = (Button) view.findViewById(R.id.back_button);
         listView = (ListView) view.findViewById(R.id.list_view);
-        adapter = new ArrayAdapter<>(getContext(),android.R.layout.simple_list_item_1,dataList);
+        adapter = new ArrayAdapter<>(LitePalApplication.getContext(),android.R.layout.simple_list_item_1,dataList);
         listView.setAdapter(adapter);
         return view;
     }
@@ -135,7 +136,7 @@ public class ChooseAreaFragment extends Fragment {
                     @Override
                     public void run() {
                         closeProgressDialog();
-                        Toast.makeText(getContext(),"加载失败",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LitePalApplication.getContext(),"加载失败",Toast.LENGTH_SHORT).show();
                     }
                 });
             }
