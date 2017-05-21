@@ -4,12 +4,16 @@ import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,6 +37,8 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
+import static org.litepal.crud.DataSupport.findAll;
+
 /**
  * Created by wanhongxu on 2017/5/9.
  */
@@ -55,6 +61,9 @@ public class ChooseAreaFragment extends Fragment {
     private City selectedCity;
     private ProgressDialog progressDialog;
     private WeatherActivity activity;
+    private EditText searchEdit;
+    private ImageView searchDelete;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -62,6 +71,8 @@ public class ChooseAreaFragment extends Fragment {
         titleText = (TextView) view.findViewById(R.id.title_text);
         backButton = (Button) view.findViewById(R.id.back_button);
         listView = (ListView) view.findViewById(R.id.list_view);
+        searchEdit = (EditText) view.findViewById(R.id.search_edit);
+        searchDelete = (ImageView) view.findViewById(R.id.search_delete);
         adapter = new ArrayAdapter<>(LitePalApplication.getContext(),android.R.layout.simple_list_item_1,dataList);
         listView.setAdapter(adapter);
         return view;
@@ -80,7 +91,8 @@ public class ChooseAreaFragment extends Fragment {
                     selectedCity = cityList.get(position);
                     queryCounties();
                 } else if (currentLevel == LEVEL_COUNTY){
-                    String weatherId = countyList.get(position).getWeatherId();
+                    String weatherId = dataList.get(position);
+//                    String weatherId = countyList.get(position).getCountyName();
                     if (getActivity() instanceof MainActivity){
                         Intent intent = new Intent(getActivity(), WeatherActivity.class);
                         intent.putExtra("weather_id",weatherId);
@@ -107,12 +119,52 @@ public class ChooseAreaFragment extends Fragment {
             }
         });
         queryProvinces();
+        searchDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchEdit.setText("");
+                queryProvinces();
+            }
+        });
+        searchEdit.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() == 0){
+                    searchDelete.setVisibility(View.GONE);
+                    queryProvinces();
+                }else {
+                    searchDelete.setVisibility(View.VISIBLE);
+                    showSearchList();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+    }
+
+    private void showSearchList() {
+        titleText.setText("中国");
+        backButton.setVisibility(View.GONE);
+        String str = searchEdit.getText().toString();
+        dataList.clear();
+        dataList.add(str);
+        adapter.notifyDataSetChanged();
+        listView.setSelection(0);
+        currentLevel = LEVEL_COUNTY;
     }
 
     private void queryProvinces() {
         titleText.setText("中国");
         backButton.setVisibility(View.GONE);
-        provinceList = DataSupport.findAll(Province.class);
+        provinceList = findAll(Province.class);
         if (provinceList.size() > 0){
             dataList.clear();
             for (Province province : provinceList){

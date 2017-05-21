@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="15dp">
@@ -9,7 +8,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/degree_text"
-        android:layout_gravity="end"
+        android:layout_alignParentRight="true"
         android:textColor="#fff"
         android:textSize="60sp"/>
 
@@ -17,8 +16,35 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/weather_info_text"
-        android:layout_gravity="end"
+        android:layout_below="@+id/degree_text"
+        android:layout_alignParentRight="true"
         android:textColor="#fff"
         android:textSize="20sp"/>
+    <ImageView
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_alignParentLeft="true"
+        android:id="@+id/now_img"/>
+    <LinearLayout
+        android:layout_alignTop="@+id/weather_info_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/now_img"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/direction_text"
+            android:textColor="#fff"
+            android:textSize="20sp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/power_text"
+            android:textColor="#fff"
+            android:textSize="20sp" />
 
-</LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>

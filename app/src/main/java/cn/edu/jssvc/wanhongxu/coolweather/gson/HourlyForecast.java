@@ -3,25 +3,21 @@ package cn.edu.jssvc.wanhongxu.coolweather.gson;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Created by wanhongxu on 2017/5/10.
+ * Created by wanhongxu on 2017/5/21.
  */
 
-public class Forecast {
+public class HourlyForecast {
     public String date;
     @SerializedName("tmp")
-    public Temperature temperature;
+    public String temperature;
 
     @SerializedName("cond")
     public More more;
 
-    public class Temperature{
-        public String max;
-        public String min;
-    }
     public class More{
-        @SerializedName("txt_d")
+        @SerializedName("txt")
         public String info;
-        @SerializedName("code_d")
+        @SerializedName("code")
         public String Forecastcode;
     }
 }
