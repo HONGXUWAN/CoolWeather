@@ -35,8 +35,8 @@
                     android:fitsSystemWindows="true">
                     <include layout="@layout/title"/>
                     <include layout="@layout/now"/>
-                    <include layout="@layout/forecast"/>
                     <include layout="@layout/hourlyforecast"/>
+                    <include layout="@layout/forecast"/>
                     <include layout="@layout/api"/>
                     <include layout="@layout/suggestion"/>
                 </LinearLayout>

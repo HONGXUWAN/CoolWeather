@@ -13,15 +13,25 @@ public class Forecast {
 
     @SerializedName("cond")
     public More more;
+    public Astro astro;
 
     public class Temperature{
         public String max;
         public String min;
     }
     public class More{
-        @SerializedName("txt_d")
-        public String info;
         @SerializedName("code_d")
-        public String Forecastcode;
+        public String Forecastcode_d;
+        @SerializedName("code_n")
+        public String Forecastcode_n;
+        @SerializedName("txt_d")
+        public String info_d;
+        @SerializedName("txt_n")
+        public String info_n;
+    }
+
+    public class Astro {
+        public String sr;
+        public String ss;
     }
 }

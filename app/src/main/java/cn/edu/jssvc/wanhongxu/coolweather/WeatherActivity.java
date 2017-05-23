@@ -62,6 +62,13 @@ public class WeatherActivity extends AppCompatActivity {
     private TextView directionText;
     private TextView powerText;
     private LinearLayout hourlyForecastLayout;
+    private TextView todayTemp;
+    private TextView todayWeather;
+    private TextView todayApi;
+    private TextView pm10Text;
+    private TextView pressText;
+    private TextView uvText;
+    private TextView srssText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,10 +92,17 @@ public class WeatherActivity extends AppCompatActivity {
         nowImg = (ImageView) findViewById(R.id.now_img);
         directionText = (TextView) findViewById(R.id.direction_text);
         powerText = (TextView) findViewById(R.id.power_text);
+        todayTemp = (TextView) findViewById(R.id.today_temp);
+        todayWeather = (TextView) findViewById(R.id.today_weather);
+        todayApi = (TextView) findViewById(R.id.today_aqi);
+        pressText = (TextView) findViewById(R.id.press_text);
+        uvText = (TextView) findViewById(R.id.uv_text);
+        srssText = (TextView) findViewById(R.id.srss_text);
         forecastLayout = (LinearLayout) findViewById(R.id.forecast_layout);
         hourlyForecastLayout = (LinearLayout) findViewById(R.id.hourlyforecast_layout);
         apiText = (TextView) findViewById(R.id.api_text);
         pm25Text = (TextView) findViewById(R.id.pm25_text);
+        pm10Text = (TextView) findViewById(R.id.pm10_text);
         humidityText = (TextView) findViewById(R.id.humidity_text);
         qltyText = (TextView) findViewById(R.id.qlty_text);
         comfortText = (TextView) findViewById(R.id.comfort_text);
@@ -195,15 +209,27 @@ public class WeatherActivity extends AppCompatActivity {
     private void showWeatherInfo(Weather weather) {
         String cityName = weather.basic.cityName;
         String updateTime = weather.basic.update.updateTime.split(" ")[1];
-        String degree = weather.now.temperature+"℃";
-        String weatherInfo = weather.now.more.info;
+        String degree = weather.now.temperature;
+        String weatherInfo = weather.now.more.info+"(实时)";
         titleCity.setText(cityName);
         titleUpdateTime.setText(updateTime);
+        if (weather.aqi != null){
+            todayApi.setText("空气"+weather.aqi.city.qlty+": "+weather.aqi.city.aqi);
+        }
         degreeText.setText(degree);
         weatherInfoText.setText(weatherInfo);
         Glide.with(this).load("https://cdn.heweather.com/cond_icon/"+weather.now.more.nowcode+".png").into(nowImg);
         directionText.setText(weather.now.windy.direction);
         powerText.setText(weather.now.windy.windPower);
+        todayTemp.setText(weather.forecastList.get(0).temperature.min+"～"+weather.forecastList.get(0).temperature.max+"℃");
+        if (weather.forecastList.get(0).more.info_d != weather.forecastList.get(0).more.info_n){
+            todayWeather.setText(weather.forecastList.get(0).more.info_d+"转"+weather.forecastList.get(0).more.info_n);
+        }else {
+            todayWeather.setText(weather.forecastList.get(0).more.info_d);
+        }
+        pressText.setText(weather.now.airpress);
+        uvText.setText(weather.suggestion.ultraviolet.brf);
+        srssText.setText(weather.forecastList.get(0).astro.sr+"-"+weather.forecastList.get(0).astro.ss);
         forecastLayout.removeAllViews();
         for (Forecast forecast : weather.forecastList){
             View view = LayoutInflater.from(this).inflate(R.layout.forecast_item,forecastLayout,false);
@@ -211,12 +237,14 @@ public class WeatherActivity extends AppCompatActivity {
             TextView infoText = (TextView) view.findViewById(R.id.info_text);
             ImageView forecastImg = (ImageView) view.findViewById(R.id.forecast_img);
             TextView maxText = (TextView) view.findViewById(R.id.max_text);
-            TextView minText = (TextView) view.findViewById(R.id.min_text);
-            dateText.setText(forecast.date);
-            Glide.with(this).load("https://cdn.heweather.com/cond_icon/"+forecast.more.Forecastcode+".png").into(forecastImg);
-            infoText.setText(forecast.more.info);
-            maxText.setText(forecast.temperature.max);
-            minText.setText(forecast.temperature.min);
+            dateText.setText(forecast.date.substring(5));
+            Glide.with(this).load("https://cdn.heweather.com/cond_icon/"+forecast.more.Forecastcode_d+".png").into(forecastImg);
+            if (forecast.more.info_d != forecast.more.info_n){
+                infoText.setText(forecast.more.info_d+"转"+forecast.more.info_n);
+            } else {
+                infoText.setText(forecast.more.info_d);
+            }
+            maxText.setText(forecast.temperature.min+"～"+forecast.temperature.max+"℃");
             forecastLayout.addView(view);
         }
         hourlyForecastLayout.removeAllViews();
@@ -226,16 +254,17 @@ public class WeatherActivity extends AppCompatActivity {
             TextView hourlyInfoText = (TextView) view.findViewById(R.id.hourly_info_text);
             TextView hourlyText = (TextView) view.findViewById(R.id.hourly_text);
             ImageView hourlyForecastImg = (ImageView) view.findViewById(R.id.hourly_forecast_img);
-            hourlyDateText.setText(hourlyForecast.date);
+            hourlyDateText.setText(hourlyForecast.date.split(" ")[1]);
             Glide.with(this).load("https://cdn.heweather.com/cond_icon/"+hourlyForecast.more.Forecastcode+".png").into(hourlyForecastImg);
             hourlyInfoText.setText(hourlyForecast.more.info);
-            hourlyText.setText(hourlyForecast.temperature);
+            hourlyText.setText(hourlyForecast.temperature+"℃");
             hourlyForecastLayout.addView(view);
         }
         if (weather.aqi != null){
             apiText.setText(weather.aqi.city.aqi);
             pm25Text.setText(weather.aqi.city.pm25);
-            qltyText.setText(weather.aqi.city.qlty);
+            pm10Text.setText(weather.aqi.city.pm10);
+            qltyText.setText("空气"+weather.aqi.city.qlty);
         }
         humidityText.setText(weather.now.humidity+"%");
         String comfort = "舒适度："+weather.suggestion.comfort.info;
@@ -253,7 +282,6 @@ public class WeatherActivity extends AppCompatActivity {
         travelText.setText(travel);
         ultravioletText.setText(ultraviolet);
         weatherLayout.setVisibility(View.VISIBLE);
-
         Intent intent = new Intent(this, AutoUpdateService.class);
         startService(intent);
     }

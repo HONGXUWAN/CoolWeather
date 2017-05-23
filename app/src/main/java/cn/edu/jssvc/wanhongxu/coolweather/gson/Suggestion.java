@@ -60,5 +60,6 @@ public class Suggestion {
     public class Ultraviolet{
         @SerializedName("txt")
         public String info;
+        public String brf;
     }
 }
